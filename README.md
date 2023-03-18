@@ -14,3 +14,5 @@ yarn
 ```bash
 yarn dev
 ```
+
+Application is now available under `http://localhost:5173/`.
