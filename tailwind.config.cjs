@@ -2,9 +2,13 @@
 module.exports = {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,jsx}",
   ],
   theme: {
+    fontFamily: {
+      "sans": ["Montserrat", "sans-serif"],
+      "mono": ["IBM Plex Mono", "monospace"]
+    },
     extend: {},
   },
   plugins: [],
