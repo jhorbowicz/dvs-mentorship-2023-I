@@ -18,6 +18,10 @@ const router = createBrowserRouter([
     path: "/week-1",
     element: <WeekOne />,
   },
+  {
+    path: "/weeks-2-and-3",
+    element: <WeeksTwoAndThree />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
