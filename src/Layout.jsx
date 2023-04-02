@@ -1,12 +1,16 @@
 function Layout({ children }) {
   return (
-    <div className="App w-screen h-screen p-4">
+    <div className="App w-screen h-screen">
+      <div className="p-10">
+
+
       <header>
         <h1 className="text-3xl font-extrabold">
           DVS Mentorship 2023 - cohort 1
         </h1>
       </header>
-      {children}
+        {children}
+      </div>
     </div>
   )
 }
