@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useData } from "../hooks/useData";
 import ChartTwo from "./ChartTwo";
+import ChartThree from "./ChartThree";
 
 function WeeksTwoAndThree() {
   const chartData = useData(
@@ -16,7 +17,10 @@ function WeeksTwoAndThree() {
         Weeks II & III: Basic chart interactions
       </h2>
       {chartData.length ? (
-        <ChartTwo dataset={chartData} width={600} height={450} />
+        <>
+          <ChartTwo dataset={chartData} width={600} height={450} />
+          <ChartThree dataset={chartData} width={600} height={450} />
+        </>
       ) : null}
     </main>
   );
