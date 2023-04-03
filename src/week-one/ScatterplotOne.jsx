@@ -1,5 +1,12 @@
-export default function ScatterplotOne({ data, xScale, yScale, xAccessor, yAccessor, colorAccessor, colorScale }) {
-
+export default function ScatterplotOne({
+  data,
+  xScale,
+  yScale,
+  xAccessor,
+  yAccessor,
+  colorAccessor,
+  colorScale,
+}) {
   return (
     <>
       {data.map((dataEntry, i) => {
@@ -12,8 +19,9 @@ export default function ScatterplotOne({ data, xScale, yScale, xAccessor, yAcces
             opacity={1}
             fill={colorScale(colorAccessor(dataEntry))}
             fillOpacity={1}
-          />)
+          />
+        );
       })}
     </>
-  )
+  );
 }
