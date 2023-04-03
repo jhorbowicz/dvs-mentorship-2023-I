@@ -6,6 +6,8 @@ export default function ScatterplotOne({
   yAccessor,
   colorAccessor,
   colorScale,
+  onMouseOverHandler = () => {},
+  onMouseOutHandler = () => {},
 }) {
   return (
     <>
@@ -19,6 +21,14 @@ export default function ScatterplotOne({
             opacity={1}
             fill={colorScale(colorAccessor(dataEntry))}
             fillOpacity={1}
+            onMouseOver={(event) =>
+              onMouseOverHandler(event, {
+                x: xAccessor(dataEntry),
+                y: yAccessor(dataEntry),
+                origin: colorAccessor(dataEntry),
+              })
+            }
+            onMouseOut={onMouseOutHandler}
           />
         );
       })}

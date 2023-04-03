@@ -5,6 +5,7 @@ import App from "./App";
 import Layout from "./Layout";
 import ErrorPage from "./ErrorPage";
 import WeekOne from "./week-one/WeekOne";
+import WeeksTwoAndThree from "./weeks-two-and-three/WeeksTwoAndThree";
 
 import "./index.css";
 

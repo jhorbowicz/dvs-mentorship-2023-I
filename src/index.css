@@ -69,5 +69,6 @@
 }
 
 .link-on-hover {
-  @apply hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-br from-orange-400 to-purple-600;
+  @apply hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-b from-rose-500 to-indigo-700;
+  @apply underline;
 }

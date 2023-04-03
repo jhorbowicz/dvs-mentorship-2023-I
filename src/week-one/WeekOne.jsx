@@ -17,9 +17,9 @@ function WeekOne() {
         Week 1: Simple scatterplot
       </h2>
 
-      {chartData.length && (
+      {chartData.length ? (
         <ChartOne dataset={chartData} width={600} height={450} />
-      )}
+      ) : null}
     </main>
   );
 }
