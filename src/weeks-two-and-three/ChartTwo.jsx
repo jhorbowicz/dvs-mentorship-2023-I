@@ -10,6 +10,7 @@ export default function ChartTwo({ dataset, width, height }) {
   const xAccessor = (d) => d["Horsepower"];
   const yAccessor = (d) => d["Miles_per_Gallon"];
   const originAccessor = (d) => d["Origin"];
+  const nameAccessor = (d) => d["Name"];
 
   const yScaleWidth = 50;
   const rightPadding = 10;
@@ -47,7 +48,7 @@ export default function ChartTwo({ dataset, width, height }) {
     hideTooltip,
   } = useTooltip();
 
-  const displayTooltip = (_, pointData) => {
+  const displayTooltip = (pointData) => {
     showTooltip({
       tooltipLeft: xScale(pointData.x),
       tooltipTop: yScale(pointData.y),
@@ -81,6 +82,7 @@ export default function ChartTwo({ dataset, width, height }) {
             yScale={yScale}
             xAccessor={xAccessor}
             yAccessor={yAccessor}
+            nameAccessor={nameAccessor}
             colorAccessor={originAccessor}
             colorScale={colorScale}
             onMouseOverHandler={displayTooltip}
@@ -99,6 +101,9 @@ export default function ChartTwo({ dataset, width, height }) {
           left={tooltipLeft}
           className="flex flex-col"
         >
+          <h2>
+            <strong>{tooltipData.name}</strong>
+          </h2>
           <span>
             Horsepower: <strong>{tooltipData.x}</strong>
           </span>
