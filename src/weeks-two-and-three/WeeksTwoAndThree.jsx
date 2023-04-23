@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import ChartOne from "./ChartOne";
 import { useData } from "../hooks/useData";
+import ChartTwo from "./ChartTwo";
+import ChartThree from "./ChartThree";
 
-function WeekOne() {
+function WeeksTwoAndThree() {
   const chartData = useData(
     "https://raw.githubusercontent.com/vega/vega-datasets/next/data/cars.json"
   );
-
   return (
     <main id="week-one" className="w-full mt-10">
       <Link to={`/`} className="font-mono italic text-xl mb-4 link-on-hover">
@@ -14,14 +14,16 @@ function WeekOne() {
         &larr; Go back to homepage
       </Link>
       <h2 className="font-sans font-extrabold text-2xl">
-        Week 1: Simple scatterplot
+        Weeks II & III: Basic chart interactions
       </h2>
-
       {chartData.length ? (
-        <ChartOne dataset={chartData} width={600} height={450} />
+        <>
+          <ChartTwo dataset={chartData} width={600} height={450} />
+          <ChartThree dataset={chartData} width={600} height={450} />
+        </>
       ) : null}
     </main>
   );
 }
 
-export default WeekOne;
+export default WeeksTwoAndThree;
