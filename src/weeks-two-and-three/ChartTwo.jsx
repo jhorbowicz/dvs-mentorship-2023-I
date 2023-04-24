@@ -11,15 +11,25 @@ export default function ChartTwo({ dataset, width, height }) {
   const yAccessor = (d) => d["Miles_per_Gallon"];
   const originAccessor = (d) => d["Origin"];
 
+  const yScaleWidth = 50;
+  const rightPadding = 10;
+  const chartWidth = width - yScaleWidth - rightPadding;
+
+  const xScaleHeight = 30;
+  const chartHeight = height - xScaleHeight;
+
   const yScale = useMemo(() => {
     return scaleLinear()
       .domain([0, max(dataset, yAccessor) + 5])
-      .range([height, 0]);
-  }, [dataset, height]);
+      .range([chartHeight, 0]);
+  }, [dataset, chartHeight]);
 
   const xScale = useMemo(() => {
-    return scaleLinear().domain(extent(dataset, xAccessor)).range([0, width]);
-  }, [dataset, width]);
+    return scaleLinear()
+      .domain(extent(dataset, xAccessor))
+      .nice()
+      .range([0, chartWidth]);
+  }, [dataset, chartWidth]);
 
   const colorScale = useMemo(() => {
     const uniqueOrigins = [...new Set(dataset.map(originAccessor))];
@@ -48,23 +58,23 @@ export default function ChartTwo({ dataset, width, height }) {
   return (
     <div className="relative" style={{ maxWidth: width }}>
       <svg
-        viewBox={`0 0 ${width + 100} ${height}`}
+        viewBox={`0 0 ${width} ${height}`}
         width={width}
         height={height}
         className="m-10"
       >
-        <g transform="translate(50, 0)">
-          <AxisLeft scale={yScale} />
-        </g>
-        <g transform="translate(50, 0)">
+        <g transform={`translate(${yScaleWidth}, 0)`}>
           <Grid
             xScale={xScale}
             yScale={yScale}
-            width={width - 50}
-            height={height}
+            width={chartWidth}
+            height={chartHeight}
           />
         </g>
-        <g transform="translate(50, 0)">
+        <g transform={`translate(${yScaleWidth}, 0)`}>
+          <AxisLeft scale={yScale} />
+        </g>
+        <g transform={`translate(${yScaleWidth}, 0)`}>
           <ScatterplotTwo
             data={dataset.filter(hasBothXandY)}
             xScale={xScale}
@@ -77,7 +87,7 @@ export default function ChartTwo({ dataset, width, height }) {
             onMouseOutHandler={hideTooltip}
           />
         </g>
-        <g transform={`translate(50, ${height})`}>
+        <g transform={`translate(${yScaleWidth}, ${chartHeight})`}>
           <AxisBottom scale={xScale} />
         </g>
       </svg>
