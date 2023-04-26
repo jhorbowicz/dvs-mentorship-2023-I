@@ -33,6 +33,18 @@ function App() {
               that may be useful while adding interactivity layer to the charts.
             </p>
           </li>
+          <li>
+            <h2 className="font-sans font-extrabold text-2xl link-on-hover">
+              <Link to={`weeks-4-to-6`}>
+                weeks IV - VI: refactor for reusability and marginal histogram
+              </Link>
+            </h2>
+            <p className="pt-2 font-mono">
+              I explored different ways of reusing chart layouts. Some may help
+              a bit, others were completely useless. Also I created a chart with
+              marginal histogram! 🎉
+            </p>
+          </li>
         </ul>
       </section>
     </main>

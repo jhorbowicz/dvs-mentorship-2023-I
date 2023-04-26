@@ -6,7 +6,7 @@ import Layout from "./Layout";
 import ErrorPage from "./ErrorPage";
 import WeekOne from "./week-one/WeekOne";
 import WeeksTwoAndThree from "./weeks-two-and-three/WeeksTwoAndThree";
-
+import WeeksFourToSix from "./weeks-four-to-six/WeeksFourToSix";
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -22,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "/weeks-2-and-3",
     element: <WeeksTwoAndThree />,
+  },
+  {
+    path: "/weeks-4-to-6",
+    element: <WeeksFourToSix />,
   },
 ]);
 
