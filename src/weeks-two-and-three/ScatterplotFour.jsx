@@ -9,9 +9,6 @@ export default function ScatterplotThree({
   onMouseOverHandler,
   onMouseOutHanlder,
 }) {
-  // const [familyToHiglight, setFamilyToHiglight] = useState();
-  // const highlightFamily = (family) => setFamilyToHiglight(family);
-
   return (
     <>
       {data.map((dataEntry, i) => {

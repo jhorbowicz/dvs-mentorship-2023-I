@@ -11,12 +11,12 @@ export default function BaseChart({
   chartDimensions,
   Chart,
   chartOwnProps = {},
-  displayLegend,
+  displayLegend = true,
 }) {
   const xAccessor = (d) => d[xAccessorKey];
   const yAccessor = (d) => d[yAccessorKey];
   const colorAccessor = (d) => d[colorAccessorKey];
-  const { wrapperHeight, wrapperWidth, chartHeight, chartWidth, yScaleWidth } =
+  const { wrapperHeight, wrapperWidth, leftMargin, chartHeight, chartWidth } =
     chartDimensions;
 
   const yScale = scaleLinear()
@@ -42,7 +42,7 @@ export default function BaseChart({
         height={wrapperHeight}
         className="m-10"
       >
-        <g transform={`translate(${yScaleWidth}, 0)`}>
+        <g transform={`translate(${leftMargin}, 0)`}>
           <Grid
             xScale={xScale}
             yScale={yScale}
@@ -50,10 +50,10 @@ export default function BaseChart({
             height={chartHeight}
           />
         </g>
-        <g transform={`translate(${yScaleWidth}, 0)`}>
+        <g transform={`translate(${leftMargin}, 0)`}>
           <AxisLeft scale={yScale} />
         </g>
-        <g transform={`translate(${yScaleWidth}, 0)`}>
+        <g transform={`translate(${leftMargin}, 0)`}>
           <Chart
             data={dataset.filter(hasBothXandY)}
             xScale={xScale}
@@ -65,7 +65,7 @@ export default function BaseChart({
             {...chartOwnProps}
           />
         </g>
-        <g transform={`translate(${yScaleWidth}, ${chartHeight})`}>
+        <g transform={`translate(${leftMargin}, ${chartHeight})`}>
           <AxisBottom scale={xScale} />
         </g>
       </svg>
