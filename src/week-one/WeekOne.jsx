@@ -18,7 +18,7 @@ function WeekOne() {
       </h2>
 
       {chartData.length ? (
-        <ChartOne dataset={chartData} width={600} height={450} />
+        <ChartOne dataset={chartData} width={800} height={450} />
       ) : null}
     </main>
   );
