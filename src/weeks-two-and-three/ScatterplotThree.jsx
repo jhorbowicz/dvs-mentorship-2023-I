@@ -21,7 +21,7 @@ export default function ScatterplotThree({
           <circle
             key={`dataEntry.name ${i}`}
             r={colorAccessor(dataEntry) === familyToHiglight ? "4" : "3"}
-            stroke="red"
+            stroke="magenta"
             strokeWidth={
               colorAccessor(dataEntry) === familyToHiglight ? "1" : "0"
             }

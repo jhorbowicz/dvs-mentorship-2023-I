@@ -1,10 +1,11 @@
 import { LegendOrdinal } from "@visx/legend";
-import ScatterplotOne from "./ScatterplotOne";
+
+import ScatterplotFour from "./ScatterplotFour";
 import BaseChart from "../components/BaseChart";
 import { useChartLayout } from "../hooks/useChartLayout";
 import { useLegendColorScale } from "../hooks/useLegendColorScale";
 
-export default function ChartOne({ dataset }) {
+export default function ChartFour({ dataset }) {
   const chartDimensions = useChartLayout();
   const { wrapperHeight, wrapperWidth } = chartDimensions;
   const colorScale = useLegendColorScale(dataset, (d) => d["Origin"]);
@@ -22,7 +23,7 @@ export default function ChartOne({ dataset }) {
           xAccessorKey="Horsepower"
           yAccessorKey="Miles_per_Gallon"
           colorAccessorKey="Origin"
-          Chart={ScatterplotOne}
+          Chart={ScatterplotFour}
           chartDimensions={chartDimensions}
         />
       </svg>

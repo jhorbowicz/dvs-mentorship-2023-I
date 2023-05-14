@@ -1,14 +1,13 @@
-export default function ScatterplotTwo({
+export default function ScatterplotThree({
   data,
   xScale,
   yScale,
   xAccessor,
   yAccessor,
-  nameAccessor,
   colorAccessor,
   colorScale,
-  onMouseOverHandler = () => {},
-  onMouseOutHandler = () => {},
+  onMouseOverHandler,
+  onMouseOutHanlder,
 }) {
   return (
     <>
@@ -26,11 +25,9 @@ export default function ScatterplotTwo({
               onMouseOverHandler({
                 x: xAccessor(dataEntry),
                 y: yAccessor(dataEntry),
-                origin: colorAccessor(dataEntry),
-                name: nameAccessor(dataEntry),
               })
             }
-            onMouseOut={onMouseOutHandler}
+            onMouseOut={onMouseOutHanlder}
           />
         );
       })}

@@ -1,42 +1,33 @@
 import { useMemo } from "react";
 import { useTooltip, Tooltip } from "@visx/tooltip";
-import { scaleLinear, extent, max, schemeCategory10, scaleOrdinal } from "d3";
-import { AxisLeft, AxisBottom } from "@visx/axis";
-import { Grid } from "@visx/grid";
+import { scaleLinear, extent, max } from "d3";
 import { LegendOrdinal } from "@visx/legend";
 import ScatterplotTwo from "./ScatterplotTwo";
+import BaseChart from "../components/BaseChart";
+import { useChartLayout } from "../hooks/useChartLayout";
+import { useLegendColorScale } from "../hooks/useLegendColorScale";
 
-export default function ChartTwo({ dataset, width, height }) {
+export default function ChartTwo({ dataset }) {
   const xAccessor = (d) => d["Horsepower"];
   const yAccessor = (d) => d["Miles_per_Gallon"];
-  const originAccessor = (d) => d["Origin"];
+  const nameAccessor = (d) => d["Name"];
 
-  const yScaleWidth = 50;
-  const rightPadding = 10;
-  const chartWidth = width - yScaleWidth - rightPadding;
-
-  const xScaleHeight = 30;
-  const chartHeight = height - xScaleHeight;
+  const chartDimensions = useChartLayout();
+  const { wrapperHeight, wrapperWidth } = chartDimensions;
+  const colorScale = useLegendColorScale(dataset, (d) => d["Origin"]);
 
   const yScale = useMemo(() => {
     return scaleLinear()
       .domain([0, max(dataset, yAccessor) + 5])
-      .range([chartHeight, 0]);
-  }, [dataset, chartHeight]);
+      .range([chartDimensions.chartHeight, 0]);
+  }, [dataset, chartDimensions.chartHeight]);
 
   const xScale = useMemo(() => {
     return scaleLinear()
       .domain(extent(dataset, xAccessor))
       .nice()
-      .range([0, chartWidth]);
-  }, [dataset, chartWidth]);
-
-  const colorScale = useMemo(() => {
-    const uniqueOrigins = [...new Set(dataset.map(originAccessor))];
-    return scaleOrdinal().domain(uniqueOrigins).range(schemeCategory10);
-  }, [dataset]);
-
-  const hasBothXandY = (d) => xAccessor(d) && yAccessor(d);
+      .range([0, chartDimensions.chartWidth]);
+  }, [dataset, chartDimensions.chartWidth]);
 
   const {
     tooltipData,
@@ -47,7 +38,7 @@ export default function ChartTwo({ dataset, width, height }) {
     hideTooltip,
   } = useTooltip();
 
-  const displayTooltip = (_, pointData) => {
+  const displayTooltip = (pointData) => {
     showTooltip({
       tooltipLeft: xScale(pointData.x),
       tooltipTop: yScale(pointData.y),
@@ -56,42 +47,27 @@ export default function ChartTwo({ dataset, width, height }) {
   };
 
   return (
-    <div className="relative" style={{ maxWidth: width }}>
+    <div className="relative" style={{ maxWidth: wrapperWidth }}>
       <svg
-        viewBox={`0 0 ${width} ${height}`}
-        width={width}
-        height={height}
+        viewBox={`0 0 ${wrapperWidth} ${wrapperHeight}`}
+        width={wrapperWidth}
+        height={wrapperHeight}
         className="m-10"
       >
-        <g transform={`translate(${yScaleWidth}, 0)`}>
-          <Grid
-            xScale={xScale}
-            yScale={yScale}
-            width={chartWidth}
-            height={chartHeight}
-          />
-        </g>
-        <g transform={`translate(${yScaleWidth}, 0)`}>
-          <AxisLeft scale={yScale} />
-        </g>
-        <g transform={`translate(${yScaleWidth}, 0)`}>
-          <ScatterplotTwo
-            data={dataset.filter(hasBothXandY)}
-            xScale={xScale}
-            yScale={yScale}
-            xAccessor={xAccessor}
-            yAccessor={yAccessor}
-            colorAccessor={originAccessor}
-            colorScale={colorScale}
-            onMouseOverHandler={displayTooltip}
-            onMouseOutHandler={hideTooltip}
-          />
-        </g>
-        <g transform={`translate(${yScaleWidth}, ${chartHeight})`}>
-          <AxisBottom scale={xScale} />
-        </g>
+        <BaseChart
+          dataset={dataset}
+          xAccessorKey="Horsepower"
+          yAccessorKey="Miles_per_Gallon"
+          colorAccessorKey="Origin"
+          Chart={ScatterplotTwo}
+          chartOwnProps={{
+            nameAccessor,
+            onMouseOverHandler: displayTooltip,
+            onMouseOutHandler: hideTooltip,
+          }}
+          chartDimensions={chartDimensions}
+        />
       </svg>
-      <LegendOrdinal scale={colorScale} className="absolute top-10 right-4" />
       {tooltipOpen ? (
         <Tooltip
           key={Math.random()}
@@ -99,6 +75,9 @@ export default function ChartTwo({ dataset, width, height }) {
           left={tooltipLeft}
           className="flex flex-col"
         >
+          <h2>
+            <strong>{tooltipData.name}</strong>
+          </h2>
           <span>
             Horsepower: <strong>{tooltipData.x}</strong>
           </span>
@@ -110,6 +89,7 @@ export default function ChartTwo({ dataset, width, height }) {
           </span>
         </Tooltip>
       ) : null}
+      <LegendOrdinal scale={colorScale} className="absolute top-10 right-4" />
     </div>
   );
 }
