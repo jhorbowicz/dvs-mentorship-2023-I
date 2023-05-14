@@ -45,6 +45,14 @@ function App() {
               marginal histogram! 🎉
             </p>
           </li>
+          <li>
+            <h2 className="font-sans font-extrabold text-2xl link-on-hover">
+              <Link to={`weeks-8-and-9`}>
+                weeks VIII - IX: Matrix of Scatterplots
+              </Link>
+            </h2>
+            <p className="pt-2 font-mono">Start working on final project 🎉</p>
+          </li>
         </ul>
       </section>
     </main>
