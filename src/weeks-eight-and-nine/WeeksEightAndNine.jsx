@@ -1,6 +1,34 @@
 import { Link } from "react-router-dom";
+import {
+  bin,
+  scaleLinear,
+  extent,
+  area,
+  curveBasis,
+  max,
+  scaleOrdinal,
+} from "d3";
+
+import MatrixDraft from "./MatrixDraft";
+import { useData } from "../hooks/useData";
+
+const chartColors = [
+  "#0077c8",
+  "#68b828",
+  "#f7bc05",
+  "#009cda",
+  "#48a9a6",
+  "#f26c21",
+  "#ed1c24",
+  "#8c4799",
+  "#a05c15",
+  "#7e7e7e",
+];
 
 function WeeksEightAndNine() {
+  const dataSet = useData(
+    "https://raw.githubusercontent.com/vega/vega-datasets/next/data/cars.json"
+  );
   // select what data goes on which column and row
 
   /*
@@ -42,7 +70,7 @@ function WeeksEightAndNine() {
       Scatterplot 20 -> Weight(0-60)
       Histogram 5 -> Count(0-60)
   */
-  const chartSize = { x: 250, y: 120 };
+  const chartSize = { x: 150, y: 150 };
   const chartMargins = {
     top: 5,
     right: 5,
@@ -53,6 +81,7 @@ function WeeksEightAndNine() {
     rows: 5,
     columns: 5,
   };
+
   const sceneSize = {
     width:
       matrixSize.columns *
@@ -60,51 +89,60 @@ function WeeksEightAndNine() {
     height:
       matrixSize.rows * (chartMargins.top + chartSize.y + chartMargins.bottom),
   };
-  const randomColors = [
-    "#7bf144",
-    "#7ed7d6",
-    "#b1f1c4",
-    "#f37f79",
-    "#393be8",
-    "#f5a9b8",
-    "#6b286e",
-    "#a68e6c",
-    "#0b7db8",
-    "#6dc0a9",
-    "#4a2a3d",
-    "#f38c39",
-    "#0d19fc",
-    "#a1d8b6",
-    "#cfe9a5",
-    "#0d7c5d",
-    "#a49a09",
-    "#e4d4ca",
-    "#5a4d71",
-    "#b46268",
-    "#9f5186",
-    "#9a88aa",
-    "#efb53f",
-    "#a0b4b8",
-    "#fed3d2",
+
+  const matrixVariables = [
+    "Miles_per_Gallon",
+    "Displacement",
+    "Horsepower",
+    "Weight_in_lbs",
+    "Acceleration",
   ];
 
+  const matrixAccessors = {};
+  matrixVariables.forEach((variable) => {
+    matrixAccessors[variable] = (data) => data[variable];
+  });
+
   // create matrix of charts' wrappers
-  const chartsWrappersMatrix = [];
+  const chartsMatrix = [];
 
   let cellCount = 0;
 
   for (let i = 1; i <= matrixSize.rows; i = i + 1) {
     for (let j = 1; j <= matrixSize.columns; j = j + 1) {
-      chartsWrappersMatrix.push({
+      const [variableX, variableY] = [
+        matrixVariables[i - 1],
+        matrixVariables[j - 1],
+      ];
+      const isDiagonal = variableX === variableY;
+      const accessors = isDiagonal
+        ? [matrixAccessors[variableX]]
+        : [matrixAccessors[variableX], matrixAccessors[variableY]];
+
+      chartsMatrix.push({
         translateX:
           i * chartMargins.left + (i - 1) * (chartSize.x + chartMargins.right),
         translateY:
           j * chartMargins.top + (j - 1) * (chartSize.y + chartMargins.bottom),
-        fillColor: randomColors[cellCount],
+        fillColor: chartColors[cellCount],
+        accessors,
+        key: `${variableX}-${variableY}`,
+        edges: {
+          top:
+            j * chartMargins.top +
+            (j - 1) * (chartSize.y + chartMargins.bottom),
+          right: i * (chartMargins.left + chartSize.x + chartMargins.right),
+          bottom: j * (chartMargins.top + chartSize.y + chartMargins.bottom),
+          left:
+            i * chartMargins.top +
+            (i - 1) * (chartSize.y + chartMargins.bottom),
+        },
       });
       cellCount += 1;
     }
   }
+
+  console.log(chartsMatrix);
 
   return (
     <main id="week-one" className="w-full mt-10">
@@ -115,32 +153,149 @@ function WeeksEightAndNine() {
       <h2 className="font-sans font-extrabold text-2xl">
         Weeks VIII - IX: Matrix of Scatterplots
       </h2>
-      <p>TO-DO: Describe the matrix of scatterplots.</p>
 
       <div className="relative" style={{ maxWidth: sceneSize.width }}>
+        <p className="font-mono text-l my-4">
+          I started by experimenting to create only the matix of correctly
+          placed SVG groups. I added them hardcoded colors, so I can track if
+          everything is placed in the right cell.
+        </p>
+        <MatrixDraft />
+        <p className="font-mono text-l my-4">
+          Next I added accessors creation to the double loop, that creates the
+          matrix. Instead of controlling placement of the chart by
+          transform/translate, I decided to pass the calulated edges of the cart
+          area, and use them to create the range for points on the chart. For
+          now I don&apos;t see the benefits of one approach over another, but
+          that may change once Il&apos;l start adding interactivities.
+        </p>
         <svg
           viewBox={`0 0 ${sceneSize.width} ${sceneSize.height}`}
           width={sceneSize.width}
           height={sceneSize.height}
           className="m-10"
         >
-          <rect width="100%" height="100%" fill="burgundy" />
-          {chartsWrappersMatrix.map((wrapper) => (
-            <g
-              key={wrapper.fillColor}
-              transform={`translate(${wrapper.translateX}, ${wrapper.translateY})`}
-            >
+          {chartsMatrix.map((wrapper) => (
+            <g key={wrapper.key}>
               <rect
                 width={chartSize.x}
                 height={chartSize.y}
                 rx={5}
-                fill={wrapper.fillColor}
+                fill="#f0f0f0"
+                transform={`translate(${wrapper.translateX}, ${wrapper.translateY})`}
               />
+              {wrapper.accessors.length === 1 ? (
+                <SimpleHistogram
+                  dataset={dataSet}
+                  xAccessor={wrapper.accessors[0]}
+                  chartTopEdge={wrapper.edges.top}
+                  chartRightEdge={wrapper.edges.right}
+                  chartBottomEdge={wrapper.edges.bottom}
+                  chartLeftEdge={wrapper.edges.left}
+                />
+              ) : (
+                <SimpleScatterplot
+                  dataset={dataSet}
+                  xAccessor={wrapper.accessors[0]}
+                  yAccessor={wrapper.accessors[1]}
+                  colorAccessor={(data) => data["Origin"]}
+                  chartTopEdge={wrapper.edges.top}
+                  chartRightEdge={wrapper.edges.right}
+                  chartBottomEdge={wrapper.edges.bottom}
+                  chartLeftEdge={wrapper.edges.left}
+                />
+              )}
             </g>
           ))}
         </svg>
       </div>
     </main>
+  );
+}
+
+function SimpleScatterplot({
+  dataset,
+  xAccessor,
+  yAccessor,
+  colorAccessor,
+  chartTopEdge,
+  chartBottomEdge,
+  chartRightEdge,
+  chartLeftEdge,
+}) {
+  const hasBothXandY = (d) => xAccessor(d) && yAccessor(d);
+
+  const yScale = scaleLinear()
+    .domain([0, max(dataset, yAccessor) + 5])
+    .range([chartBottomEdge, chartTopEdge]);
+
+  const xScale = scaleLinear()
+    .domain(extent(dataset, xAccessor))
+    .nice()
+    .range([chartLeftEdge, chartRightEdge]);
+
+  const colorScale = scaleOrdinal()
+    .domain([...new Set(dataset.map(colorAccessor))])
+    .range(chartColors);
+
+  return (
+    <>
+      {dataset.filter(hasBothXandY).map((dataEntry, i) => {
+        return (
+          <circle
+            key={`dataEntry.name ${i}`}
+            r="2"
+            cx={xScale(xAccessor(dataEntry))}
+            cy={yScale(yAccessor(dataEntry))}
+            opacity={1}
+            fill={colorScale(colorAccessor(dataEntry))}
+            fillOpacity={1}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+function SimpleHistogram({
+  dataset,
+  xAccessor,
+  chartTopEdge,
+  chartBottomEdge,
+  chartRightEdge,
+  chartLeftEdge,
+}) {
+  const xScale = scaleLinear()
+    .domain(extent(dataset, xAccessor))
+    .nice()
+    .range([chartRightEdge, chartLeftEdge]);
+
+  const histogramGenerator = bin()
+    .domain(xScale.domain())
+    .value(xAccessor)
+    .thresholds(15);
+
+  const histogramBins = histogramGenerator(dataset);
+
+  const histogramYScale = scaleLinear()
+    .domain(extent(histogramBins, (d) => d.length))
+    .range([chartBottomEdge - 5, chartTopEdge]);
+
+  const histogram = area()
+    .x((d) => xScale((d.x0 + d.x1) / 2))
+    .y0(chartBottomEdge - 5)
+    .y1((d) => histogramYScale(d.length))
+    .curve(curveBasis);
+
+  return (
+    <>
+      <path
+        d={histogram(histogramBins)}
+        fill="#48a9a6bb"
+        stroke="#0077c8"
+        strokeWidth={2}
+      />
+    </>
   );
 }
 
