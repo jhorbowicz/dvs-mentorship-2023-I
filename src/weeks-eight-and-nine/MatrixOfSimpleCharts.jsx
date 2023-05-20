@@ -70,7 +70,6 @@ function MatrixOfSimpleCharts({ dataSet }) {
     }
   }
 
-  console.log(chartsMatrix);
   return (
     <div className="relative" style={{ maxWidth: sceneSize.width }}>
       <svg
